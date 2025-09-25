@@ -2,42 +2,39 @@ package com.example.actividad1;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.*;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
     EditText emailInput, passwordInput;
     Button loginBtn, goToRegisterBtn;
-    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        auth = FirebaseAuth.getInstance();
         emailInput = findViewById(R.id.email);
         passwordInput = findViewById(R.id.password);
         loginBtn = findViewById(R.id.login_button);
         goToRegisterBtn = findViewById(R.id.go_to_register);
 
         loginBtn.setOnClickListener(v -> {
-            String email = emailInput.getText().toString();
-            String pass = passwordInput.getText().toString();
+            String email = emailInput.getText().toString().trim();
+            String pass = passwordInput.getText().toString().trim();
 
-            if (email.isEmpty() || pass.isEmpty()) {
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
                 Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            auth.signInWithEmailAndPassword(email, pass)
-                    .addOnSuccessListener(result -> {
-                        startActivity(new Intent(this, MainActivity.class));
-                        finish();
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("email", email);
+            startActivity(intent);
+            finish();
         });
 
         goToRegisterBtn.setOnClickListener(v ->
